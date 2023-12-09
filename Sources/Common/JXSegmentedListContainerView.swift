@@ -474,7 +474,24 @@ extension JXSegmentedListContainerView: UICollectionViewDataSource, UICollection
         listDidAppearOrDisappear(scrollView: scrollView)
     }
 
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            multiScrollViewDidEndScroll()
+        }
+    }
+    
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        multiScrollViewDidEndScroll()
+    }
+    
+    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        multiScrollViewDidEndScroll()
+    }
+    
+    private func multiScrollViewDidEndScroll() {
+        // 关键多执行这一行
+        listDidAppearOrDisappear(scrollView: scrollView)
+
         //滑动到一半又取消滑动处理
         if willAppearIndex != -1 || willDisappearIndex != -1 {
             listWillDisappear(at: willAppearIndex)
