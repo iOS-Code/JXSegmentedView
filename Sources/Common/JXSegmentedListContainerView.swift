@@ -473,31 +473,18 @@ extension JXSegmentedListContainerView: UICollectionViewDataSource, UICollection
         }
         listDidAppearOrDisappear(scrollView: scrollView)
     }
-
-    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if !decelerate {
-            multiScrollViewDidEndScroll()
-        }
-    }
     
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        multiScrollViewDidEndScroll()
-    }
-    
-    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        multiScrollViewDidEndScroll()
-    }
-    
-    private func multiScrollViewDidEndScroll() {
-        // 关键多执行这一行
-        listDidAppearOrDisappear(scrollView: scrollView)
-
         //滑动到一半又取消滑动处理
         if willAppearIndex != -1 || willDisappearIndex != -1 {
+            let percent = scrollView.contentOffset.x/scrollView.bounds.size.width
+            let maxCount = Int(round(scrollView.contentSize.width/scrollView.bounds.size.width))
+            var targetAppearIndex = Int(floor(Double(percent)))
+            targetAppearIndex = max(0, min(maxCount - 1, targetAppearIndex))
             listWillDisappear(at: willAppearIndex)
-            listWillAppear(at: willDisappearIndex)
+            listWillAppear(at: targetAppearIndex)
             listDidDisappear(at: willAppearIndex)
-            listDidAppear(at: willDisappearIndex)
+            listDidAppear(at: targetAppearIndex)
             willDisappearIndex = -1
             willAppearIndex = -1
         }
